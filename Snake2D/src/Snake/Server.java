@@ -15,6 +15,8 @@ import java.net.*;
 // Server class
 public class Server {
 
+    static ServerPanel Panel;
+
     static Vector<ClientHandler> ar = new Vector<>();
 
     //    static GamePlay gamePlay= new GamePlay(new Barrier(),new Snake());
@@ -24,7 +26,7 @@ public class Server {
     static int i = 0;
     static boolean isStart = false;
     static boolean haveWinner = false;
-    static Integer whenWin = 3;
+    static Integer whenWin = 5;
     static Integer numCon = 2;
     static Snake s1 = new Snake("client 0", new ArrayList<Integer>(Arrays.asList(1, 2, 3)), new ArrayList<Integer>(Arrays.asList(1)));
     static Snake s2 = new Snake("client 1", new ArrayList<Integer>(Arrays.asList(1, 2, 3)), new ArrayList<Integer>(Arrays.asList(1)));
@@ -48,6 +50,9 @@ public class Server {
         // server is listening on port 5056
         ServerSocket ss = new ServerSocket(5056);
 
+        Panel  = new ServerPanel();
+
+
         // running infinite loop for getting
         // client request
         while (true) {
@@ -58,6 +63,9 @@ public class Server {
 
                 s = ss.accept();
 
+                //remove wait msg from Panel
+                Panel.waitMsg.setVisible(false);
+
                 System.out.println("A new client is connected : " + s);
 
                 // obtaining input and out streams
@@ -65,9 +73,12 @@ public class Server {
                 DataOutputStream dos = new DataOutputStream(s.getOutputStream());
 
                 System.out.println("Assigning new thread for this client");
-
+                //Name for the client
+                String Name = "client "+i;
+                String ip = "IP:"+s.getInetAddress() +" Port: "+s.getPort();
+                Panel.checkCountClient(i,Name,ip,"connected");
                 // create a new thread object
-                ClientHandler client = new ClientHandler(s, "client " + i, dis, dos);
+                ClientHandler client = new ClientHandler(s, Name, dis, dos);
                 Thread t = new Thread(client);
                 i++;
                 ar.add(client);
@@ -90,6 +101,9 @@ public class Server {
         for (ClientHandler m : ar) {
             m.dos.writeUTF("Enjoy Playing Snake Game");
             m.dos.flush();
+            // set msg in the Panel
+            Panel.gameState.setVisible(true);
+
             Snake s = (Snake) otherSnake.get(counter);
             ArrayList<Snake> otherSnakeArray = (ArrayList<Snake>) gamePlayObj.get("other");
 
@@ -117,6 +131,10 @@ public class Server {
             Thread.sleep(100);
             for (ClientHandler m : ar) {
                 if (m.Score == whenWin) {
+                    // Introduction of winner in Panel
+                    Panel.Winner.setText(Panel.Winner.getText()+m.name);
+                    Panel.Winner.setVisible(true);
+
                     System.out.println(m.name + "is Win");
                     haveWinner = true;
 //                    m.dos.writeUTF("You Win");
