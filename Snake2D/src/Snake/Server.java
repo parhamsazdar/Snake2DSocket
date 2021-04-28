@@ -8,6 +8,7 @@ package Snake;
 // It contains two classes : Server and ClientHandler
 // Save file as Server.java
 
+import javax.swing.*;
 import java.io.*;
 import java.util.*;
 import java.net.*;
@@ -26,7 +27,7 @@ public class Server {
     static int i = 0;
     static boolean isStart = false;
     static boolean haveWinner = false;
-    static Integer whenWin = 5;
+    static Integer whenWin = 2;
     static Integer numCon = 2;
     static Snake s1 = new Snake("client 0", new ArrayList<Integer>(Arrays.asList(1, 2, 3)), new ArrayList<Integer>(Arrays.asList(1)));
     static Snake s2 = new Snake("client 1", new ArrayList<Integer>(Arrays.asList(1, 2, 3)), new ArrayList<Integer>(Arrays.asList(1)));
@@ -46,11 +47,12 @@ public class Server {
         }
     }
 
+
     public static void main(String[] args) throws IOException, InterruptedException {
         // server is listening on port 5056
         ServerSocket ss = new ServerSocket(8000);
 
-        Panel  = new ServerPanel();
+        Panel = new ServerPanel();
 
 
         // running infinite loop for getting
@@ -74,9 +76,9 @@ public class Server {
 
                 System.out.println("Assigning new thread for this client");
                 //Name for the client
-                String Name = "client "+i;
-                String ip = "IP:"+s.getInetAddress() +" Port: "+s.getPort();
-                Panel.checkCountClient(i,Name,ip,"connected");
+                String Name = "client " + i;
+                String ip = "IP:" + s.getInetAddress() + " Port: " + s.getPort();
+                Panel.checkCountClient(i, Name, ip, "connected");
                 // create a new thread object
                 ClientHandler client = new ClientHandler(s, Name, dis, dos);
                 Thread t = new Thread(client);
@@ -132,7 +134,7 @@ public class Server {
             for (ClientHandler m : ar) {
                 if (m.Score == whenWin) {
                     // Introduction of winner in Panel
-                    Panel.Winner.setText(Panel.Winner.getText()+m.name);
+                    Panel.Winner.setText(Panel.Winner.getText() + m.name);
                     Panel.Winner.setVisible(true);
 
                     System.out.println(m.name + "is Win");
@@ -170,20 +172,77 @@ class ClientHandler extends Thread {
         ObjectInputStream objData;
         ObjectOutputStream objSendData;
         HashMap received;
+        String receivedChangeName;
+
+        try {
+            String Name = dis.readUTF();
+            String previousName = this.name;
+            String newName =Name;
+            for (int i = 0; i < Server.Panel.poolLabel.size(); i++) {
+                if (Server.Panel.poolLabel.get(i).getText().equals(previousName)) {
+                    Server.Panel.poolLabel.get(i).setText(newName);
+                    Server.ar.get(i).name = newName;
+                    Server.otherSnake.get(i).name = newName;
+                }
+            }
+
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
         while (true) {
             try {
+                // set player Name
+//                receivedChangeName = dis.readUTF();
+
+
                 objData = new ObjectInputStream(dis);
+                received = (HashMap) objData.readObject();
                 if (!Server.isStart) {
                     // Ask user what he wants
                     dos.writeUTF("Wait until another player is going to be connect");
                     dos.flush();
                 }
+//                if (!received.get("Name").equals(null)) {
+//                    String received_3 = (String) received.get("Name");
+//                    StringTokenizer s = new StringTokenizer(received_3, "#");
+//                    String previousName = s.nextToken();
+//                    String newName = s.nextToken();
+//                    for (int i = 0;i<Server.Panel.poolLabel.size();i++) {
+//                        if (Server.Panel.poolLabel.get(i).getText().equals(previousName)) {
+//                            Server.Panel.poolLabel.get(i).setText(newName);
+////                            Server.ar.get(i).name = newName;
+////                            Server.otherSnake.get(i).name = newName;
+//                        }
+//                    }
+//                }
                 // receive the answer from client
-                received = (HashMap) objData.readObject();
+
+                if (Integer.valueOf((Integer) received.get("Score")) == 0){
+                    StringTokenizer s = new StringTokenizer((String) received.get("Name"), "#");
+                    String previousName = s.nextToken();
+                    System.out.println(previousName);
+                    String newName = s.nextToken();
+                    for (int i = 0; i < Server.Panel.poolLabel.size(); i++) {
+                        if (Server.Panel.poolLabel.get(i).getText().equals(previousName)) {
+                            Server.Panel.poolLabel.get(i).setText(newName);
+                            Server.ar.get(i).name = newName;
+                            Server.otherSnake.get(i).name = newName;
+                        }
+                    }
+
+                }
+
+
                 if (Integer.valueOf((Integer) received.get("Score")) >= 1) {
-                    Score = Integer.valueOf((Integer) received.get("Score"));
+                    System.out.println(55);
+                    this.Score = Integer.valueOf((Integer) received.get("Score"));
                     food = (Food) received.get("Food");
                 }
+
 
                 // Send other client data
                 for (ClientHandler m : Server.ar) {

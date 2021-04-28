@@ -1,15 +1,12 @@
 package Snake;
 
 
+import javax.lang.model.element.Name;
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.net.InetAddress;
-import java.net.Socket;
-import java.net.UnknownHostException;
+
 
 class ClientPanel {
 
@@ -20,13 +17,18 @@ class ClientPanel {
     public JLabel port = new JLabel("Port : ");
     public JButton connect = new JButton("Connect");
     public JLabel state = new JLabel("Connecting ...");
+    public JLabel name = new JLabel("Name");
     public JTextField serverIPText = new JTextField();
     public JTextField portText = new JTextField();
+    public JTextField nameText = new JTextField();
+
+    public String clientName;
+
     public String ip_text;
     public Integer port_text;
 
 
-    public JLabel clientName = new JLabel();
+    public JLabel clientNameLabel = new JLabel();
 
     // client 1
     public JLabel name_1 = new JLabel();
@@ -46,6 +48,10 @@ class ClientPanel {
 
     // Wait message
     public JLabel waitMsg = new JLabel("please Wait for other client . . .");
+
+    // client Jlabel if wi or lose
+    public JLabel youAreWinner = new JLabel("You are Winner");
+    public JLabel youAreLoser = new JLabel("You lose the game");
 
 
     public static void InitializedPanel() {
@@ -70,11 +76,10 @@ class ClientPanel {
 
     }
 
-    public void returnClientInstance() {
-    }
 
-    public ClientPanel(String Name) {
-
+    public ClientPanel() {
+        name.setBounds(50, 50, 200, 30);
+        nameText.setBounds(150, 50, 200, 30);
         serverIP.setBounds(50, 100, 200, 30);
         serverIPText.setBounds(150, 100, 200, 30);
         port.setBounds(50, 150, 200, 30);
@@ -82,23 +87,25 @@ class ClientPanel {
         connect.setBounds(50, 200, 100, 30);
         state.setBounds(200, 200, 400, 30);
         waitMsg.setBounds(100, 280, 300, 30);
-        clientName.setBounds(100, 250, 300, 30);
+        clientNameLabel.setBounds(100, 250, 300, 30);
+//        youAreWinner.setBounds();
 
-
+        f.add(name);
+        f.add(nameText);
         f.add(serverIP);
         f.add(serverIPText);
         f.add(port);
         f.add(portText);
         f.add(connect);
         f.add(state);
-        f.add(clientName);
+        f.add(clientNameLabel);
+        f.add(youAreWinner);
+        f.add(youAreLoser);
 
         state.setVisible(false);
         waitMsg.setVisible(false);
-        clientName.setVisible(false);
+        clientNameLabel.setVisible(false);
 
-
-        clientName.setText("Welcome " + Name);
 
         //Game State
         gameState.setBounds(200, 150, 250, 100);
@@ -140,15 +147,20 @@ class ClientPanel {
                     ip_text = serverIPText.getText();
                     port_text = Integer.valueOf(portText.getText());
 
+                    //set client Name
+                    clientName = nameText.getText();
+                    clientNameLabel.setText("Welcome " + clientName);
+
 
                     state.setText("Connected");
 
-                    clientName.setVisible(true);
+                    clientNameLabel.setVisible(true);
                     waitMsg.setVisible(true);
 
                     serverIPText.setEnabled(false);
                     portText.setEnabled(false);
                     connect.setEnabled(false);
+                    nameText.setEnabled(false);
 
                 }
 
@@ -179,7 +191,7 @@ class ClientPanel {
 
 
     public static void main(String args[]) throws InterruptedException {
-        ClientPanel client = new ClientPanel("parham");
+        ClientPanel client = new ClientPanel();
 
 
     }

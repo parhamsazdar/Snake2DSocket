@@ -3,6 +3,8 @@ package Snake;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 class ServerPanel
 {
@@ -31,6 +33,11 @@ class ServerPanel
     // Wait message
     static JLabel waitMsg = new JLabel("Server is waiting for client . . .");
 
+
+    public ArrayList<JLabel> poolLabel = new ArrayList<>(Arrays.asList(
+            name_1,
+            name_2
+    ));
 
     public static void InitializedPanel(){
 
@@ -112,12 +119,6 @@ class ServerPanel
         ip_2.setText(ip);
         connected_2.setText(state);
     }
-
-
-
-
-
-
 
     public static void addComponent(JFrame f,JLabel ...J){
         for (JLabel j : J){

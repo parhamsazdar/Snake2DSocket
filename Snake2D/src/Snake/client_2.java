@@ -15,106 +15,140 @@ import java.util.Scanner;
 public class client_2 {
     static boolean isStart = false;
     static GamePlay gamePlay;
+    static String oldNAme;
 
-    public static void main(String[] args) throws IOException {
-        try {
-            Scanner scn = new Scanner(System.in);
-
-            // getting localhost ip
-            InetAddress ip = InetAddress.getByName("localhost");
-
-            // establish the connection with server port 5056
-            Socket s = new Socket(ip, 8000);
-
-            // obtaining input and out streams
-            DataInputStream dis = new DataInputStream(s.getInputStream());
-            DataOutputStream dos = new DataOutputStream(s.getOutputStream());
-
-            // the following loop performs the exchange of
-            // information between client and client handler
-            while (true) {
-                String receive = dis.readUTF();
-
-                if (receive.equals("Enjoy Playing Snake Game")) {
-                    ObjectInputStream objGame = new ObjectInputStream(dis);
-                    HashMap gamePlayObj = (HashMap) objGame.readObject();
-
-                    Snake snake = new Snake("client 1", new ArrayList<Integer>(Arrays.asList(1, 2, 3)), new ArrayList<Integer>(Arrays.asList(1)));
-
-                    Food food_game = (Food) gamePlayObj.get("Food");
-
-                    ArrayList<Snake> otherSnakeArray = (ArrayList<Snake>) gamePlayObj.get("other");
-
-                    Snake mainSnake = (Snake) gamePlayObj.get("mainSnake");
-
-                    System.out.println(mainSnake.name);
-                    gamePlay = new GamePlay((Barrier) gamePlayObj.get("Barrier"), mainSnake, food_game, otherSnakeArray.get(0));
+    public static void main(String[] args) throws IOException, InterruptedException {
 
 
-                    JFrame obj = new JFrame();
+        ClientPanel c = new ClientPanel();
+        while (true) {
+            Thread.sleep(100);
+            if (c.validIp) {
+                System.out.println("Your IP and Port are valid");
+                try {
 
-                    obj.setBounds(10, 10, 905, 700);
-                    obj.setBackground(Color.DARK_GRAY);
-                    obj.setResizable(false);
-                    obj.setVisible(true);
-                    obj.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                    obj.add(gamePlay);
-                    isStart = true;
-                    System.out.println(receive);
+                    // getting localhost ip
+                    String ip = c.serverIPText.getText();
+                    Integer port = Integer.parseInt(c.portText.getText());
 
-                }
-                if (receive.equals("Data")) {
-                    ObjectInputStream objData = new ObjectInputStream(dis);
-                    HashMap DataHashMap = (HashMap) objData.readObject();
-                    Food food = (Food) DataHashMap.get("Food");
-                    Snake snake = (Snake) DataHashMap.get("Snake");
-                    // set other Snake
-                    for (int i = 0; i < gamePlay.otherSnake.length; i++) {
-                        Snake otherSnake = gamePlay.otherSnake[i];
-                        if (otherSnake.name.equals(snake.name)) {
-                            gamePlay.otherSnake[i] = snake;
+                    // establish the connection with server port 5056
+                    Socket s = new Socket(ip,port);
+
+
+                    // obtaining input and out streams
+                    DataInputStream dis = new DataInputStream(s.getInputStream());
+                    DataOutputStream dos = new DataOutputStream(s.getOutputStream());
+
+                    // the following loop performs the exchange of
+                    // information between client and client handler
+
+                    dos.writeUTF(c.clientName);
+                    dos.flush();
+
+                    while (true) {
+                        String receive = dis.readUTF();
+
+                        if (receive.equals("Enjoy Playing Snake Game")) {
+                            ObjectInputStream objGame = new ObjectInputStream(dis);
+                            HashMap gamePlayObj = (HashMap) objGame.readObject();
+
+                            Snake snake = new Snake("client 1", new ArrayList<Integer>(Arrays.asList(1, 2, 3)), new ArrayList<Integer>(Arrays.asList(1)));
+
+                            Food food_game = (Food) gamePlayObj.get("Food");
+
+                            ArrayList<Snake> otherSnakeArray = (ArrayList<Snake>) gamePlayObj.get("other");
+
+                            Snake mainSnake = (Snake) gamePlayObj.get("mainSnake");
+
+                            oldNAme = mainSnake.name;
+                            // set name of snake
+//                            mainSnake.name = c.clientName;
+
+                            // send new Name for server
+//                            ObjectOutputStream objName = new ObjectOutputStream(dos);
+//                            HashMap Data = new HashMap<>(){{
+//                                put("Name",mainSnake.name+"#"+c.clientName);
+//                            }};
+//                            objName.writeObject(Data);
+//                            objName.flush();
+//                            dos.writeUTF("changeName");
+//                            dos.flush();
+//
+//                            dos.writeUTF(mainSnake.name+"#"+c.clientName);
+//                            dos.flush();
+
+                            System.out.println(mainSnake.name);
+                            gamePlay = new GamePlay((Barrier) gamePlayObj.get("Barrier"), mainSnake, food_game, otherSnakeArray.get(0));
+
+
+                            JFrame obj = new JFrame();
+
+                            obj.setBounds(10, 10, 905, 700);
+                            obj.setBackground(Color.DARK_GRAY);
+                            obj.setResizable(false);
+                            obj.setVisible(true);
+                            obj.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                            obj.add(gamePlay);
+                            isStart = true;
+                            System.out.println(receive);
+
                         }
-                    }
-                    // set food of Snake
-                    if (food.FOOD_X.size() < gamePlay.food.FOOD_X.size()) {
-                        gamePlay.setNewFood(food);
-                    }
-                }
-                if (receive.equals("winner")) {
-                    gamePlay.isWinner = true;
-                }
-                if (receive.equals("finish")) {
-                    gamePlay.isFinish = true;
-                }
-                if (isStart) {
-                    Thread.sleep(100);
-                    Integer Score = gamePlay.getScore();
-                    HashMap Data = new HashMap() {{
-                        put("Score", Score);
-                        put("Food", gamePlay.food);
-                        put("Snake", gamePlay.snake);
-                    }};
-                    ObjectOutputStream objData = new ObjectOutputStream(dos);
-                    objData.writeObject(Data);
-                    objData.flush();
+                        if (receive.equals("Data")) {
+                            ObjectInputStream objData = new ObjectInputStream(dis);
+                            HashMap DataHashMap = (HashMap) objData.readObject();
+                            Food food = (Food) DataHashMap.get("Food");
+                            Snake snake = (Snake) DataHashMap.get("Snake");
+                            // set other Snake
+                            for (int i = 0; i < gamePlay.otherSnake.length; i++) {
+                                Snake otherSnake = gamePlay.otherSnake[i];
+                                if (otherSnake.name.equals(snake.name)) {
+                                    gamePlay.otherSnake[i] = snake;
+                                }
+                            }
+                            // set food of Snake
+                            if (food.FOOD_X.size() < gamePlay.food.FOOD_X.size()) {
+                                gamePlay.setNewFood(food);
+                            }
+                        }
+                        if (receive.equals("winner")) {
+                            gamePlay.isWinner = true;
+                        }
+                        if (receive.equals("finish")) {
+                            gamePlay.isFinish = true;
+                        }
+                        if (isStart) {
+                            Thread.sleep(100);
+                            Integer Score = gamePlay.getScore();
+                            String Name = oldNAme+"#"+c.clientName;
+                            HashMap Data = new HashMap() {{
+                                put("Score", Score);
+                                put("Food", gamePlay.food);
+                                put("Snake", gamePlay.snake);
+                                put("Name",Name);
+                            }};
+                            ObjectOutputStream objData = new ObjectOutputStream(dos);
+                            objData.writeObject(Data);
+                            objData.flush();
 //                    dos.writeUTF(String.valueOf(Score));
-                }
+                        }
 
-                if (receive.equals("Exit")) {
-                    System.out.println("Closing this connection : " + s);
-                    s.close();
-                    System.out.println("Connection closed");
-                    break;
-                }
+                        if (receive.equals("Exit")) {
+                            System.out.println("Closing this connection : " + s);
+                            s.close();
+                            System.out.println("Connection closed");
+                            break;
+                        }
 
+                    }
+
+                    // closing resources
+                    dis.close();
+                    dos.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                break;
             }
-
-            // closing resources
-            scn.close();
-            dis.close();
-            dos.close();
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 }
