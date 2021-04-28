@@ -33,8 +33,9 @@ class ServerPanel
 
 
     public static void InitializedPanel(){
-        ip.setBounds(50,20,100,50);
-        Name.setBounds(150,20,100,50);
+
+        Name.setBounds(50,20,100,50);
+        ip.setBounds(150,20,100,50);
         State.setBounds(350,20,100,50);
         waitMsg.setBounds(200,150,250,100);
     }

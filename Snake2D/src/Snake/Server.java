@@ -48,7 +48,7 @@ public class Server {
 
     public static void main(String[] args) throws IOException, InterruptedException {
         // server is listening on port 5056
-        ServerSocket ss = new ServerSocket(5056);
+        ServerSocket ss = new ServerSocket(8000);
 
         Panel  = new ServerPanel();
 
@@ -202,6 +202,7 @@ class ClientHandler extends Thread {
                     System.out.println("Closing this connection.");
                     this.s.close();
                     System.out.println("Connection closed");
+                    Server.ar.remove(Server.ar.indexOf(this));
                     break;
                 }
 
