@@ -18,8 +18,8 @@ class ClientPanel {
     public JButton connect = new JButton("Connect");
     public JLabel state = new JLabel("Connecting ...");
     public JLabel name = new JLabel("Name");
-    public JTextField serverIPText = new JTextField();
-    public JTextField portText = new JTextField();
+    public JTextField serverIPText = new JTextField("127.0.0.1");
+    public JTextField portText = new JTextField("8000");
     public JTextField nameText = new JTextField();
 
     public String clientName;
@@ -170,6 +170,13 @@ class ClientPanel {
 
 
     }
+
+    public void setVisibleLabelFalse(JLabel ...J){
+        for (JLabel j : J){
+            j.setVisible(false);
+        }
+    }
+
 
     public void setClient_1(String Name, String ip, String state) {
         name_1.setText(Name);

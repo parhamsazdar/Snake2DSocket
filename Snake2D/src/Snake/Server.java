@@ -41,9 +41,9 @@ public class Server {
 
     }};
 
-    public static void finishGame() throws IOException {
+    public static void finishGame(String winner) throws IOException {
         for (ClientHandler m : ar) {
-            m.dos.writeUTF("finish");
+            m.dos.writeUTF(winner + "#" + "finish");
         }
     }
 
@@ -92,6 +92,7 @@ public class Server {
                     System.out.println("Game is ready to start");
                     break;
                 }
+
 
             } catch (Exception e) {
                 s.close();
@@ -142,7 +143,7 @@ public class Server {
 //                    m.dos.writeUTF("You Win");
                     m.dos.writeUTF("winner");
                     m.dos.flush();
-                    finishGame();
+                    finishGame(m.name);
                     break;
                 }
             }
@@ -175,9 +176,10 @@ class ClientHandler extends Thread {
         String receivedChangeName;
 
         try {
+            // set this user name in server panel
             String Name = dis.readUTF();
             String previousName = this.name;
-            String newName =Name;
+            String newName = Name;
             for (int i = 0; i < Server.Panel.poolLabel.size(); i++) {
                 if (Server.Panel.poolLabel.get(i).getText().equals(previousName)) {
                     Server.Panel.poolLabel.get(i).setText(newName);
@@ -185,8 +187,6 @@ class ClientHandler extends Thread {
                     Server.otherSnake.get(i).name = newName;
                 }
             }
-
-
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -206,39 +206,9 @@ class ClientHandler extends Thread {
                     dos.writeUTF("Wait until another player is going to be connect");
                     dos.flush();
                 }
-//                if (!received.get("Name").equals(null)) {
-//                    String received_3 = (String) received.get("Name");
-//                    StringTokenizer s = new StringTokenizer(received_3, "#");
-//                    String previousName = s.nextToken();
-//                    String newName = s.nextToken();
-//                    for (int i = 0;i<Server.Panel.poolLabel.size();i++) {
-//                        if (Server.Panel.poolLabel.get(i).getText().equals(previousName)) {
-//                            Server.Panel.poolLabel.get(i).setText(newName);
-////                            Server.ar.get(i).name = newName;
-////                            Server.otherSnake.get(i).name = newName;
-//                        }
-//                    }
-//                }
-                // receive the answer from client
-
-                if (Integer.valueOf((Integer) received.get("Score")) == 0){
-                    StringTokenizer s = new StringTokenizer((String) received.get("Name"), "#");
-                    String previousName = s.nextToken();
-                    System.out.println(previousName);
-                    String newName = s.nextToken();
-                    for (int i = 0; i < Server.Panel.poolLabel.size(); i++) {
-                        if (Server.Panel.poolLabel.get(i).getText().equals(previousName)) {
-                            Server.Panel.poolLabel.get(i).setText(newName);
-                            Server.ar.get(i).name = newName;
-                            Server.otherSnake.get(i).name = newName;
-                        }
-                    }
-
-                }
 
 
                 if (Integer.valueOf((Integer) received.get("Score")) >= 1) {
-                    System.out.println(55);
                     this.Score = Integer.valueOf((Integer) received.get("Score"));
                     food = (Food) received.get("Food");
                 }

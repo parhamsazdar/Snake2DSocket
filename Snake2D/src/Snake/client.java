@@ -6,10 +6,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.*;
 import java.net.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Scanner;
+import java.util.*;
 
 // Client class
 public class client {
@@ -32,7 +29,7 @@ public class client {
                     Integer port = Integer.parseInt(c.portText.getText());
 
                     // establish the connection with server port 5056
-                    Socket s = new Socket(ip,port);
+                    Socket s = new Socket(ip, port);
 
 
                     // obtaining input and out streams
@@ -48,6 +45,8 @@ public class client {
                         String receive = dis.readUTF();
 
                         if (receive.equals("Enjoy Playing Snake Game")) {
+                            c.setVisibleLabelFalse(c.waitMsg);
+
                             ObjectInputStream objGame = new ObjectInputStream(dis);
                             HashMap gamePlayObj = (HashMap) objGame.readObject();
 
@@ -60,21 +59,6 @@ public class client {
                             Snake mainSnake = (Snake) gamePlayObj.get("mainSnake");
 
                             oldNAme = mainSnake.name;
-                            // set name of snake
-//                            mainSnake.name = c.clientName;
-
-                            // send new Name for server
-//                            ObjectOutputStream objName = new ObjectOutputStream(dos);
-//                            HashMap Data = new HashMap<>(){{
-//                                put("Name",mainSnake.name+"#"+c.clientName);
-//                            }};
-//                            objName.writeObject(Data);
-//                            objName.flush();
-//                            dos.writeUTF("changeName");
-//                            dos.flush();
-//
-//                            dos.writeUTF(mainSnake.name+"#"+c.clientName);
-//                            dos.flush();
 
                             System.out.println(mainSnake.name);
                             gamePlay = new GamePlay((Barrier) gamePlayObj.get("Barrier"), mainSnake, food_game, otherSnakeArray.get(0));
@@ -110,20 +94,28 @@ public class client {
                             }
                         }
                         if (receive.equals("winner")) {
+                            c.Winner.setVisible(true);
+                            c.Winner.setText("You are winner");
                             gamePlay.isWinner = true;
                         }
-                        if (receive.equals("finish")) {
+                        if (receive.contains("finish")) {
+                            if (!isStart) {
+                                StringTokenizer commandFinish = new StringTokenizer(receive, "#");
+                                String winner = commandFinish.nextToken();
+                                c.Winner.setVisible(true);
+                                c.Winner.setText(winner+" is winner");
+                            }
                             gamePlay.isFinish = true;
                         }
                         if (isStart) {
                             Thread.sleep(100);
                             Integer Score = gamePlay.getScore();
-                            String Name = oldNAme+"#"+c.clientName;
+                            String Name = oldNAme + "#" + c.clientName;
                             HashMap Data = new HashMap() {{
                                 put("Score", Score);
                                 put("Food", gamePlay.food);
                                 put("Snake", gamePlay.snake);
-                                put("Name",Name);
+                                put("Name", Name);
                             }};
                             ObjectOutputStream objData = new ObjectOutputStream(dos);
                             objData.writeObject(Data);
