@@ -8,7 +8,7 @@ package Snake;
 // It contains two classes : Server and ClientHandler
 // Save file as Server.java
 
-import javax.swing.*;
+
 import java.io.*;
 import java.util.*;
 import java.net.*;
@@ -29,8 +29,8 @@ public class Server {
     static boolean haveWinner = false;
     static Integer whenWin = 2;
     static Integer numCon = 2;
-    static Snake s1 = new Snake("client 0", new ArrayList<Integer>(Arrays.asList(1, 2, 3)), new ArrayList<Integer>(Arrays.asList(1)));
-    static Snake s2 = new Snake("client 1", new ArrayList<Integer>(Arrays.asList(1, 2, 3)), new ArrayList<Integer>(Arrays.asList(1)));
+    static Snake s1 = new Snake("client 0", new ArrayList<>(Arrays.asList(1, 2, 3)), new ArrayList<>(Arrays.asList(1)));
+    static Snake s2 = new Snake("client 1", new ArrayList<>(Arrays.asList(1, 2, 3)), new ArrayList<>(Arrays.asList(1)));
 
     static Vector<Snake> otherSnake = new Vector(Arrays.asList(s1, s2));
 
