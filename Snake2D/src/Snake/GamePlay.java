@@ -102,6 +102,7 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener, Ser
         this.snake.left = false;
         this.snake.up = false;
         this.snake.down = false;
+        isFinish = true;
         timer.setDelay(Delay);
     }
 
@@ -319,37 +320,41 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener, Ser
 
     @Override
     public void keyPressed(KeyEvent e) {
+
         if (e.getKeyCode() == KeyEvent.VK_SPACE) {
             RestartGame();
         }
-        if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-            this.snake.move++;
-            this.snake.right = (!this.snake.left) ? true : false;
-            this.snake.up = false;
-            this.snake.down = false;
-        }
+        if (!isFinish && !isWinner) {
+            if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+                this.snake.move++;
+                this.snake.right = (!this.snake.left) ? true : false;
+                this.snake.up = false;
+                this.snake.down = false;
+            }
 
-        if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-            this.snake.move++;
-            this.snake.left = (!this.snake.right) ? true : false;
-            this.snake.up = false;
-            this.snake.down = false;
-        }
-        if (e.getKeyCode() == KeyEvent.VK_UP) {
-            this.snake.move++;
-            this.snake.up = (!this.snake.down) ? true : false;
-            this.snake.right = false;
-            this.snake.left = false;
-        }
+            if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+                this.snake.move++;
+                this.snake.left = (!this.snake.right) ? true : false;
+                this.snake.up = false;
+                this.snake.down = false;
+            }
+            if (e.getKeyCode() == KeyEvent.VK_UP) {
+                this.snake.move++;
+                this.snake.up = (!this.snake.down) ? true : false;
+                this.snake.right = false;
+                this.snake.left = false;
+            }
 
-        if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-            this.snake.move++;
-            this.snake.down = (!this.snake.up) ? true : false;
-            this.snake.right = false;
-            this.snake.left = false;
-        }
+            if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+                this.snake.move++;
+                this.snake.down = (!this.snake.up) ? true : false;
+                this.snake.right = false;
+                this.snake.left = false;
+            }
 
+        }
     }
+
 
     @Override
     public void keyReleased(KeyEvent e) {

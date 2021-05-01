@@ -12,7 +12,6 @@ class ClientPanel {
 
     public JFrame f = new JFrame("Client Panel");
     public boolean validIp = false;
-    public ClientPanel c = this;
     public JLabel serverIP = new JLabel("Server IP :");
     public JLabel port = new JLabel("Port : ");
     public JButton connect = new JButton("Connect");
@@ -21,6 +20,9 @@ class ClientPanel {
     public JTextField serverIPText = new JTextField("127.0.0.1");
     public JTextField portText = new JTextField("8000");
     public JTextField nameText = new JTextField();
+    static JLabel ip = new JLabel("IP");
+    static JLabel Name = new JLabel("Name");
+    static JLabel stateOther = new JLabel("State");
 
     public String clientName;
 
@@ -88,6 +90,10 @@ class ClientPanel {
         state.setBounds(200, 200, 400, 30);
         waitMsg.setBounds(100, 280, 300, 30);
         clientNameLabel.setBounds(100, 250, 300, 30);
+        Name.setBounds(50, 300, 100, 50);
+        stateOther.setBounds(150, 300, 50, 50);
+        name_1.setBounds(50, 330, 100, 50);
+        connected_1.setBounds(150, 330, 100, 50);
 //        youAreWinner.setBounds();
 
         f.add(name);
@@ -101,11 +107,18 @@ class ClientPanel {
         f.add(clientNameLabel);
         f.add(youAreWinner);
         f.add(youAreLoser);
+        f.add(ip);
+        f.add(Name);
+        f.add(stateOther);
+        f.add(name_1);
+        f.add(connected_1);
+
 
         state.setVisible(false);
         waitMsg.setVisible(false);
         clientNameLabel.setVisible(false);
-
+        name_1.setVisible(false);
+        connected_1.setVisible(false);
 
         //Game State
         gameState.setBounds(200, 150, 250, 100);
@@ -171,23 +184,18 @@ class ClientPanel {
 
     }
 
-    public void setVisibleLabelFalse(JLabel ...J){
-        for (JLabel j : J){
+    public void setVisibleLabelFalse(JLabel... J) {
+        for (JLabel j : J) {
             j.setVisible(false);
         }
     }
 
 
-    public void setClient_1(String Name, String ip, String state) {
+    public void setClient_1(String Name, String state) {
         name_1.setText(Name);
-        ip_1.setText(ip);
         connected_1.setText(state);
-    }
-
-    public void setClient_2(String Name, String ip, String state) {
-        name_2.setText(Name);
-        ip_2.setText(ip);
-        connected_2.setText(state);
+        name_1.setVisible(true);
+        connected_1.setVisible(true);
     }
 
     public static void addComponent(JFrame f, JLabel... J) {

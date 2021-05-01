@@ -23,7 +23,6 @@ public class client {
             if (c.validIp) {
                 System.out.println("Your IP and Port are valid");
                 try {
-
                     // getting localhost ip
                     String ip = c.serverIPText.getText();
                     Integer port = Integer.parseInt(c.portText.getText());
@@ -41,8 +40,28 @@ public class client {
 
                     // the following loop performs the exchange of
                     // information between client and client handler
+
+
                     while (true) {
                         String receive = dis.readUTF();
+
+                        // set other user name that connected after this client .
+                        if (receive.contains("name")) {
+                            StringTokenizer stringTok = new StringTokenizer(receive, "#");
+                            String otherName = stringTok.nextToken();
+                            // add in panel Client
+                            c.setClient_1(otherName, "connected");
+
+                        }
+
+                        if (receive.equals("otherName")) {
+                            ObjectInputStream objOtherName = new ObjectInputStream(dis);
+                            ArrayList<String> otherName = (ArrayList<String>) objOtherName.readObject();
+                            // set in client panel
+                            for (String i : otherName) {
+                                c.setClient_1(i, "connected");
+                            }
+                        }
 
                         if (receive.equals("Enjoy Playing Snake Game")) {
                             c.setVisibleLabelFalse(c.waitMsg);
@@ -99,11 +118,11 @@ public class client {
                             gamePlay.isWinner = true;
                         }
                         if (receive.contains("finish")) {
-                            if (!isStart) {
+                            if (!gamePlay.isWinner) {
                                 StringTokenizer commandFinish = new StringTokenizer(receive, "#");
                                 String winner = commandFinish.nextToken();
                                 c.Winner.setVisible(true);
-                                c.Winner.setText(winner+" is winner");
+                                c.Winner.setText(winner + " is winner");
                             }
                             gamePlay.isFinish = true;
                         }
@@ -122,6 +141,7 @@ public class client {
                             objData.flush();
 //                    dos.writeUTF(String.valueOf(Score));
                         }
+
 
                         if (receive.equals("Exit")) {
                             System.out.println("Closing this connection : " + s);

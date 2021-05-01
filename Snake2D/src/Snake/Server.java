@@ -88,6 +88,29 @@ public class Server {
                 // Invoking the start() method
                 t.start();
 
+                // Broadcast to other user that I come .
+                ArrayList<String> otherName = new ArrayList<>();
+
+                Thread.sleep(100);
+                for (int i = 0; i < ar.size() - 1; i++) {
+                    ClientHandler otherClient = ar.get(i);
+                    otherClient.dos.writeUTF(client.name + "#" + "name");
+                    otherClient.dos.flush();
+
+                    otherName.add(otherClient.name);
+                }
+
+                if (otherName.size() > 0) {
+                    client.dos.writeUTF("otherName");
+                    client.dos.flush();
+
+                    ObjectOutputStream objOther = new ObjectOutputStream(dos);
+                    objOther.writeObject(otherName);
+                    objOther.flush();
+                }
+
+
+                // check for num of connections and when break from the while
                 if (ar.size() == numCon) {
                     System.out.println("Game is ready to start");
                     break;
