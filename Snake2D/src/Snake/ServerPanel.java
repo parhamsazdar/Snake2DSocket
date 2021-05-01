@@ -132,14 +132,5 @@ class ServerPanel
         ServerPanel server=new ServerPanel();
         server.setClient_1("parham","javaPoint.com","connected");
         server.setClient_2("Ali","youtube.com","connected");
-//        for (int i = 0 ; i<5;i++){
-//            Thread.sleep(1000);
-//            ServerPanel.name_1.setText(String.valueOf(i));
-//
-//        }
-//        Thread.sleep(2000);
-//        server.gameState.setVisible(true);
-
-
     }
 }

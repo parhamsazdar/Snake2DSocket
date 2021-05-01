@@ -16,8 +16,8 @@ public class client {
 
     public static void main(String[] args) throws IOException, InterruptedException {
 
-
         ClientPanel c = new ClientPanel();
+        // wait until user inputs are correct
         while (true) {
             Thread.sleep(100);
             if (c.validIp) {
@@ -53,7 +53,7 @@ public class client {
                             c.setClient_1(otherName, "connected");
 
                         }
-
+                        // get the client data that the connected before its connect
                         if (receive.equals("otherName")) {
                             ObjectInputStream objOtherName = new ObjectInputStream(dis);
                             ArrayList<String> otherName = (ArrayList<String>) objOtherName.readObject();
@@ -63,6 +63,7 @@ public class client {
                             }
                         }
 
+                        // Receive object game from server
                         if (receive.equals("Enjoy Playing Snake Game")) {
                             c.setVisibleLabelFalse(c.waitMsg);
 
@@ -95,12 +96,14 @@ public class client {
                             System.out.println(receive);
 
                         }
+
+                        // receive other clients data for being real time
                         if (receive.equals("Data")) {
                             ObjectInputStream objData = new ObjectInputStream(dis);
                             HashMap DataHashMap = (HashMap) objData.readObject();
                             Food food = (Food) DataHashMap.get("Food");
                             Snake snake = (Snake) DataHashMap.get("Snake");
-                            // set other Snake
+                            // set other Snakes
                             for (int i = 0; i < gamePlay.otherSnake.length; i++) {
                                 Snake otherSnake = gamePlay.otherSnake[i];
                                 if (otherSnake.name.equals(snake.name)) {
@@ -112,11 +115,13 @@ public class client {
                                 gamePlay.setNewFood(food);
                             }
                         }
+                        // catch alarm winne
                         if (receive.equals("winner")) {
                             c.Winner.setVisible(true);
                             c.Winner.setText("You are winner");
                             gamePlay.isWinner = true;
                         }
+                        // catch alarm finish game and you are the looser
                         if (receive.contains("finish")) {
                             if (!gamePlay.isWinner) {
                                 StringTokenizer commandFinish = new StringTokenizer(receive, "#");
@@ -126,6 +131,7 @@ public class client {
                             }
                             gamePlay.isFinish = true;
                         }
+                        // send its  data for the other clients
                         if (isStart) {
                             Thread.sleep(100);
                             Integer Score = gamePlay.getScore();
@@ -139,7 +145,6 @@ public class client {
                             ObjectOutputStream objData = new ObjectOutputStream(dos);
                             objData.writeObject(Data);
                             objData.flush();
-//                    dos.writeUTF(String.valueOf(Score));
                         }
 
 

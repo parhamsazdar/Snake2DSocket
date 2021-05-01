@@ -23,24 +23,29 @@ public class Server {
     //    static GamePlay gamePlay= new GamePlay(new Barrier(),new Snake());
     static Barrier barrier = new Barrier();
     static Food food = new Food();
+
     // counter for clients
     static int i = 0;
     static boolean isStart = false;
     static boolean haveWinner = false;
     static Integer whenWin = 2;
     static Integer numCon = 2;
+
+    //Create Snake By default name
     static Snake s1 = new Snake("client 0", new ArrayList<>(Arrays.asList(1, 2, 3)), new ArrayList<>(Arrays.asList(1)));
     static Snake s2 = new Snake("client 1", new ArrayList<>(Arrays.asList(1, 2, 3)), new ArrayList<>(Arrays.asList(1)));
 
+    // vector of Default Snake
     static Vector<Snake> otherSnake = new Vector(Arrays.asList(s1, s2));
 
+    // the Same object that we have to share with game play
     static HashMap gamePlayObj = new HashMap() {{
         put("Food", food);
         put("Barrier", barrier);
         put("other", new ArrayList<Snake>());
-
     }};
 
+    // send alarm finish game for the looser client
     public static void finishGame(String winner) throws IOException {
         for (ClientHandler m : ar) {
             m.dos.writeUTF(winner + "#" + "finish");
@@ -49,9 +54,10 @@ public class Server {
 
 
     public static void main(String[] args) throws IOException, InterruptedException {
-        // server is listening on port 5056
+        // server is listening on port 8000
         ServerSocket ss = new ServerSocket(8000);
 
+        // Gui server
         Panel = new ServerPanel();
 
 
@@ -99,7 +105,7 @@ public class Server {
 
                     otherName.add(otherClient.name);
                 }
-
+                // catch other user data and send it to me
                 if (otherName.size() > 0) {
                     client.dos.writeUTF("otherName");
                     client.dos.flush();
@@ -143,6 +149,7 @@ public class Server {
                 }
             }
 
+            // send objOther snake
             ObjectOutputStream objGame = new ObjectOutputStream(m.dos);
             objGame.writeObject(gamePlayObj);
             objGame.flush();
@@ -230,7 +237,7 @@ class ClientHandler extends Thread {
                     dos.flush();
                 }
 
-
+                // set Obj food that is same between other client for sharing this obj
                 if (Integer.valueOf((Integer) received.get("Score")) >= 1) {
                     this.Score = Integer.valueOf((Integer) received.get("Score"));
                     food = (Food) received.get("Food");
